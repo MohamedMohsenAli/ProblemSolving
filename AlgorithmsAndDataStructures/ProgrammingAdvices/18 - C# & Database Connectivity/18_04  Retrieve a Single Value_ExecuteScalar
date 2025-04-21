@@ -1,0 +1,57 @@
+using System;
+using System.Data;
+using System.Net;
+using System.Data.SqlClient;
+
+public class Program
+{
+    static string connectionString = "Server=.;Database=ContactsDB;User Id=sa;Password=sa123456";
+
+    static string  GetFirstName(int ContactID)
+    {
+
+        string FirstName = "";
+
+        SqlConnection Connection = new SqlConnection(connectionString);
+        //String Query = "select * from contacts where FirstName="+FirstName;
+
+        String Query = "select FirstName from contacts where ContactID=@ContactID";
+        SqlCommand command = new SqlCommand(Query, Connection);
+
+        command.Parameters.AddWithValue("@ContactID", ContactID);
+
+
+
+        try
+        {
+            Connection.Open();
+            object result = command.ExecuteScalar();
+
+            if (result != null)
+            {
+                FirstName = result.ToString();
+
+            }
+
+            else { FirstName = ""; }
+ 
+             Connection.Close();
+        }
+
+        catch (Exception ex) { Console.WriteLine(ex.Message); };
+
+
+
+        return FirstName;
+    }
+
+
+
+    public static void Main()
+
+    {
+
+        Console.WriteLine(GetFirstName(1));
+        Console.ReadKey();
+    }
+}
