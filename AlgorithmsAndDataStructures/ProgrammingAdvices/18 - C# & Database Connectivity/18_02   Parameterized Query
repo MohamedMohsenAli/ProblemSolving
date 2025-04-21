@@ -1,0 +1,63 @@
+using System;
+using System.Data;
+using System.Net;
+using System.Data.SqlClient;
+
+public class Program
+{
+    static string connectionString = "Server=.;Database=ContactsDB;User Id=sa;Password=sa123456";
+
+    static void PrintAllContactsWithFirstName(string FirstName,int CountryID)
+    {
+        SqlConnection sqlConnection = new SqlConnection(connectionString);
+        //String Query = "select * from contacts where FirstName="+FirstName;
+
+       String Query = "select * from contacts where FirstName= @FirstName and CountryID=@CountryID";
+        SqlCommand cmd = new SqlCommand(Query, sqlConnection);
+
+        cmd.Parameters.AddWithValue("@FirstName", FirstName);
+        cmd.Parameters.AddWithValue("@CountryID", CountryID);
+
+
+        try
+        {
+            sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read()) 
+            
+            {
+                int contactID = (int)reader["ContactID"];
+                string firstName = (string)reader["FirstName"];
+                string LastName = (string)reader["LastName"];
+                string email = (string)reader["Email"];
+                string Phone = (string)reader["Phone"];
+                string Address = (string)reader["Address"];
+                int countryID = (int)reader["CountryID"];
+
+                Console.WriteLine($"Contact ID:{contactID}");
+
+                Console.WriteLine($"Name:{firstName} {LastName}");
+                Console.WriteLine($"Email:{email}");
+                Console.WriteLine($"Phone:{Phone}");
+                Console.WriteLine($"Address:{Address}");
+                Console.WriteLine($"Country ID:{countryID}");
+                Console.WriteLine();
+            }
+            reader.Close();
+            sqlConnection.Close();
+        }
+
+        catch (Exception ex) { Console.WriteLine(ex.Message); };
+
+
+    }
+
+
+    public static void Main()
+
+{
+        PrintAllContactsWithFirstName("jane",1);
+        Console.ReadKey();  
+}
+}
